@@ -2,12 +2,16 @@ import os
 import cv2
 import numpy as np
 import logging
+import json
+
+output_dir = 'data'
+os.makedirs(output_dir, exist_ok=True)
 
 # 로그 설정
 logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
 
 # 이미지 경로 설정
-file_path = 'C:/Users/INTELLIZ Corp/Desktop/pyzbar/img/20250731_140757_925.png'
+file_path = 'C:/Users/INTELLIZ Corp/Desktop/pyzbar/img/20250804_194952_003.png'
 
 # 1. 파일 존재 확인
 if not os.path.exists(file_path):
@@ -49,12 +53,13 @@ for a in alphas:
                 pt2 = tuple(pts[(i + 1) % len(pts)])
                 cv2.line(adjusted, pt1, pt2, color, 2)
 
-            window_title = f"밝기/대비 ({a},{b}) - QR 인식 성공" if data else f"밝기/대비 ({a},{b}) - QR 형태 감지 (데이터 없음)"
-            cv2.imshow(window_title, adjusted)
-            cv2.waitKey(0)
-            cv2.destroyAllWindows()
+        
 
             if data:
+                window_title = f"밝기/대비 ({a},{b}) - QR 인식 성공" if data else f"밝기/대비 ({a},{b}) - QR 형태 감지 (데이터 없음)"
+                cv2.imshow(window_title, adjusted)
+                cv2.waitKey(0)
+                cv2.destroyAllWindows()
                 logging.info(f"QR 코드 인식 성공 → 데이터: {data}")
                 found = True
                 break
@@ -94,8 +99,26 @@ if not found:
                         cv2.waitKey(0)
                         cv2.destroyAllWindows()
                         logging.info(f"QR 코드 인식 성공 (각도: {angle}도) → 데이터: {data}")
-                        found = True
-                        break
+
+
+                        json_data = {
+                            "filename" : os.path.basename(file_path),
+                            "data" : data
+                        }
+
+                        json_filename = os.path.splitext(os.path.basename(file_path))[0] + '.json'
+                        json_path = os.path.join(output_dir, json_filename)
+
+                        try: 
+                            with open(json_path, 'w') as f:
+                                json.dump(json_data, f, ensure_ascii=False, indent=4)
+
+                            logging.info(f"QR 데이터가 JSON으로 저장되었습니다: {json_path}")
+                            found = True
+                            break
+
+                        except Exception as e:
+                            logging.error(f"JSON 저장 실패: {e}")
                     else:
                         logging.info(f"[{angle}도] QR 형태는 감지됐지만 데이터 없음")
             if found:
