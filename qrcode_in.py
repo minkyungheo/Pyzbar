@@ -7,7 +7,7 @@ import logging
 logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
 
 # 이미지 경로 설정
-file_path = 'C:/Users/INTELLIZ Corp/Desktop/pyzbar/img/20250731_140754_770.png'
+file_path = 'C:/Users/INTELLIZ Corp/Desktop/pyzbar/img/20250731_140757_925.png'
 
 # 1. 파일 존재 확인
 if not os.path.exists(file_path):
@@ -87,15 +87,17 @@ if not found:
                         pt2 = tuple(pts[(i + 1) % len(pts)])
                         cv2.line(adjusted, pt1, pt2, color, 2)
 
-                    window_title = f"{angle}도 - 밝기({a},{b}) - QR 인식 성공" if data else f"{angle}도 - QR 형태 감지 (데이터 없음)"
-                    cv2.imshow(window_title, adjusted)
-                    cv2.waitKey(0)
-                    cv2.destroyAllWindows()
 
                     if data:
+                        window_title = f"{angle}도 - 밝기({a},{b}) - QR 인식 성공" if data else f"{angle}도 - QR 형태 감지 (데이터 없음)"
+                        cv2.imshow(window_title, adjusted)
+                        cv2.waitKey(0)
+                        cv2.destroyAllWindows()
                         logging.info(f"QR 코드 인식 성공 (각도: {angle}도) → 데이터: {data}")
                         found = True
                         break
+                    else:
+                        logging.info(f"[{angle}도] QR 형태는 감지됐지만 데이터 없음")
             if found:
                 break
         if found:
