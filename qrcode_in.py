@@ -1,6 +1,5 @@
 import os
 import cv2
-import numpy as np
 import logging
 import json
 
@@ -11,7 +10,7 @@ os.makedirs(output_dir, exist_ok=True)
 logging.basicConfig(level=logging.INFO, format='[%(levelname)s] %(message)s')
 
 # 이미지 경로 설정
-file_path = 'C:/Users/INTELLIZ Corp/Desktop/pyzbar/img/20250804_194952_003.png'
+file_path = 'C:/Users/INTELLIZ Corp/Desktop/pyzbar/img/20250725_195140_395.png'
 
 # 1. 파일 존재 확인
 if not os.path.exists(file_path):
@@ -56,7 +55,7 @@ for a in alphas:
         
 
             if data:
-                window_title = f"밝기/대비 ({a},{b}) - QR 인식 성공" if data else f"밝기/대비 ({a},{b}) - QR 형태 감지 (데이터 없음)"
+                window_title = "큐알"
                 cv2.imshow(window_title, adjusted)
                 cv2.waitKey(0)
                 cv2.destroyAllWindows()
@@ -110,7 +109,7 @@ if not found:
                         json_path = os.path.join(output_dir, json_filename)
 
                         try: 
-                            with open(json_path, 'w') as f:
+                            with open(json_path, 'w', encoding='UTF-8') as f:
                                 json.dump(json_data, f, ensure_ascii=False, indent=4)
 
                             logging.info(f"QR 데이터가 JSON으로 저장되었습니다: {json_path}")
