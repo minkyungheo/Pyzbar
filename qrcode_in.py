@@ -76,6 +76,13 @@ if not found:
         M = cv2.getRotationMatrix2D((w // 2, h // 2), angle, 2.0)
         rotated = cv2.warpAffine(img, M, (w, h), flags=cv2.INTER_NEAREST)
 
+        data, points, _ = qr_detector.detectAndDecode(rotated)
+
+        if points is not None and data:
+            logging.info(f"회전만으로 OR 코드 인식 성공 (각도: {angle}도") 
+            found = True
+            break
+
         for a in alphas:
             for b in betas:
                 adjusted = adjust_brightness_contrast(rotated, a, b)
